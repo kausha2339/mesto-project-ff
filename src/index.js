@@ -23,32 +23,20 @@ const popUpImageCaption = document.querySelector(".popup__caption");
 
 const profileForm = document.querySelector(".popup__form");
 
-
-function appendCard(cardItem) {
-  cardsContainer.append(cardItem)
-}
-
 initialCards.forEach((card) => {
   const cardItem = createCard(card, deleteCard, likeCard, handleImagePopup);
   cardsContainer.appendChild(cardItem);
 });
-
-initialCards.forEach(function(card) {
-    const newCard = createCard(card.link, card.name, deleteCard, likeCard, handleImagePopup);
-    appendCard(newCard);
-})
 
 const popups = document.querySelectorAll(".popup");
 popups.forEach((popup) => {
     const closeButton = popup.querySelector(".popup__close");
     closeButton.addEventListener('click', (event) => {
         closePopUp(popup);
-        
     })
     popup.addEventListener('click', (event) => {
       if (event.target === event.currentTarget) {
       closePopUp(popup);
-      
   }})
 })
 
@@ -59,7 +47,7 @@ buttonEdit.addEventListener('click', () => {
   openPopUp(popUpEdit);
 })
 
-////изменение названия страницы
+
 function handleProfileFormSubmit(evt) {
     evt.preventDefault(); 
     profileTitle.textContent = nameInput.value;
@@ -73,10 +61,8 @@ function handleCardFormSubmit(evt) {
     link: inputLinkCard.value, 
     name: inputNameCard.value
   } 
-  const cardElement = createCard(newCard.link, newCard.name, deleteCard, likeCard, handleImagePopup);
-  //appendCard(cardItem);
+  const cardElement = createCard(newCard, deleteCard, likeCard, handleImagePopup);
   cardsContainer.prepend(cardElement); 
- 
   popUpAddForm.reset();
   closePopUp(popUpAdd); 
 }
