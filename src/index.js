@@ -1,79 +1,92 @@
-import '.src/index.css'; // добавьте импорт главного файла стилей npm i css-loader --save-dev
-/*import {initialCards} from "..components/cards.js";*/
+import './pages/index.css'; // добавьте импорт главного файла стилей npm i css-loader --save-dev
+import { initialCards } from './components/cards.js';
+import {createCard, deleteCard, likeCard, cardsContainer } from './components/function.js';
+import {openPopUp, closePopUp, handleEscape} from './components/modal.js';
 
-// @todo: Темплейт карточки
-const cardTemplate = document.querySelector("#card-template").content;
+const popUpEdit = document.querySelector(".popup_type_edit");
+const buttonEdit = document.querySelector(".profile__edit-button");
+const buttonAdd = document.querySelector(".profile__add-button");
+const popUpAdd = document.querySelector(".popup_type_new-card");
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
 
-// @todo: DOM узлы
-const cardsContainer = document.querySelector(".places__list");
+const popUpAddForm = document.querySelector(".popup_type_new-card .popup__form");
+const inputNameCard = document.querySelector(".popup__input_type_card-name");
+const inputLinkCard = document.querySelector(".popup__input_type_url");
 
-// @todo: Функция создания карточки
-function createCard(card, deleteCard) {
-    const cardItem = cardTemplate.querySelector(".card").cloneNode(true);
-    const cardDeleteButton = cardItem.querySelector(".card__delete-button");
-    const cardImg = cardItem.querySelector(".card__image");
-    cardImg.alt=card.name;
-    cardImg.src = card.link;
-    cardItem.querySelector(".card__title").textContent = card.name;
-    cardDeleteButton.addEventListener("click", () => {
-        deleteCard(cardItem);
-    });
-    return cardItem;
+const nameInput = document.querySelector(".popup__input_type_name");
+const jobInput = document.querySelector(".popup__input_type_description");
+
+const popUpTypeImage = document.querySelector(".popup_type_image");
+const popUpImage = document.querySelector(".popup__image");
+const popUpImageCaption = document.querySelector(".popup__caption");
+
+const profileForm = document.querySelector(".popup__form");
+
+
+function appendCard(cardItem) {
+  cardsContainer.append(cardItem)
 }
 
-// @todo: Функция удаления карточки
-function deleteCard(cardItem) {
-    cardItem.remove();
-}
-
-// @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
-    const cardElement = createCard(card, deleteCard);
-    cardsContainer.appendChild(cardElement);
-});
-/*
-const editButton = document.querySelector('.profile__edit-button');
-const addButton = document.querySelector('.profile__add-button');
-const editPopup = document.querySelector('.popup_type_edit');
-const addPopup = document.querySelector('.popup_type_new-card');
-const closeButtons = document.querySelectorAll('.popup__close');
-const overlay = document.querySelectorAll('.popup');
-
-function openPopup(element) {
-    element.classList.add('popup_opened');
-};
-
-function closePopup(element) {
-    element.classList.remove('popup_opened');
-};
-
-editButton.addEventListener('click', () => openPopup(editPopup));
-
-closeButtons.forEach(button => {
-    button.addEventListener('click', () => closePopup(editPopup));
+  const cardItem = createCard(card, deleteCard, likeCard, handleImagePopup);
+  cardsContainer.appendChild(cardItem);
 });
 
-\]';
-// Находим форму в DOM
-const formElement = // Воспользуйтесь методом querySelector()
-// Находим поля формы в DOM
-const nameInput = // Воспользуйтесь инструментом .querySelector()
-const jobInput = // Воспользуйтесь инструментом .querySelector()
+initialCards.forEach(function(card) {
+    const newCard = createCard(card.link, card.name, deleteCard, likeCard, handleImagePopup);
+    appendCard(newCard);
+})
 
-// Обработчик «отправки» формы, хотя пока
-// она никуда отправляться не будет
-function handleFormSubmit(evt) {
-    evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
-                                                // Так мы можем определить свою логику отправки.
-                                                // О том, как это делать, расскажем позже.
+const popups = document.querySelectorAll(".popup");
+popups.forEach((popup) => {
+    const closeButton = popup.querySelector(".popup__close");
+    closeButton.addEventListener('click', (event) => {
+        closePopUp(popup);
+        
+    })
+    popup.addEventListener('click', (event) => {
+      if (event.target === event.currentTarget) {
+      closePopUp(popup);
+      
+  }})
+})
 
-    // Получите значение полей jobInput и nameInput из свойства value
+buttonAdd.addEventListener('click', () => { openPopUp(popUpAdd) });
+buttonEdit.addEventListener('click', () => { 
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+  openPopUp(popUpEdit);
+})
 
-    // Выберите элементы, куда должны быть вставлены значения полей
-
-    // Вставьте новые значения с помощью textContent
+////изменение названия страницы
+function handleProfileFormSubmit(evt) {
+    evt.preventDefault(); 
+    profileTitle.textContent = nameInput.value;
+    profileDescription.textContent = jobInput.value;
+    closePopUp(popUpEdit);
 }
 
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
-formElement.addEventListener('submit', handleFormSubmit); */
+function handleCardFormSubmit(evt) { 
+  evt.preventDefault(); 
+  const newCard = { 
+    link: inputLinkCard.value, 
+    name: inputNameCard.value
+  } 
+  const cardElement = createCard(newCard.link, newCard.name, deleteCard, likeCard, handleImagePopup);
+  //appendCard(cardItem);
+  cardsContainer.prepend(cardElement); 
+ 
+  popUpAddForm.reset();
+  closePopUp(popUpAdd); 
+}
+
+export function handleImagePopup(card) {
+  popUpImage.src = card.link;
+  popUpImageCaption.textContent = card.name;
+  popUpImage.alt = card.name;
+  openPopUp(popUpTypeImage);
+}
+
+popUpAddForm.addEventListener('submit', handleCardFormSubmit);
+profileForm.addEventListener('submit', handleProfileFormSubmit); 
