@@ -1,6 +1,6 @@
 import './pages/index.css'; // добавьте импорт главного файла стилей npm i css-loader --save-dev
 import { initialCards } from './components/cards.js';
-import {createCard, deleteCard, likeCard, cardsContainer } from './components/function.js';
+import {createCard, deleteCard, likeCard, cardsContainer } from './components/card.js';
 import {openPopUp, closePopUp, handleEscape} from './components/modal.js';
 
 const popUpEdit = document.querySelector(".popup_type_edit");
