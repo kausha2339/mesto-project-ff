@@ -17,3 +17,25 @@ export function handleEscape(evt) {
     closePopUp(openedPopUp);
   }
 }
+
+export function renderLoading(button, isLoading) {
+  if (isLoading) {
+    button.textContent = "Сохранение...";
+    button.disabled = true;
+  } else {
+    button.textContent = "Сохранить";
+    button.disabled = false;
+  }
+}
+
+export function closePopupOverlay(evt) {
+  if (evt.target.classList.contains("popup")) {
+    closePopUp(evt.target);
+  }
+}
+
+export function closePopupByCross(evt) {
+  if (evt.target.classList.contains("popup__close")) {
+    closePopUp(evt.target.closest(".popup"));
+  }
+}
