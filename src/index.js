@@ -1,12 +1,11 @@
 import "./pages/index.css"; // добавьте импорт главного файла стилей npm i css-loader --save-dev
-import { createCard, deleteCard, likeCard } from "./components/card.js";
+import { createCard, likeCard } from "./components/card.js";
 import {
   openPopUp,
   closePopUp,
   closePopupOverlay,
   closePopupByCross,
   handleEscape,
-  renderLoading,
 } from "./components/modal.js";
 import {
   enableValidation,
@@ -57,8 +56,6 @@ const linkCardInput = formNewCard.elements.link;
 const formAvatar = document.forms["avatar"];
 const linkInputAvatar = formAvatar.elements["avatar-link"];
 
-enableValidation(validationConfig);
-
 Promise.all([getInitialCards(), getUserInfo()])
   .then(([dataCards, dataProfile]) => {
     handleProfileFormSubmit(dataProfile);
@@ -67,6 +64,16 @@ Promise.all([getInitialCards(), getUserInfo()])
   .catch((err) => {
     console.log(`Что-то пошло не так. Ошибка: ${err}`);
   });
+
+function renderLoading(button, isLoading) {
+  if (isLoading) {
+    button.textContent = "Сохранение...";
+    button.disabled = true;
+  } else {
+    button.textContent = "Сохранить";
+    button.disabled = false;
+  }
+}
 
 function handleProfileFormSubmit(res) {
   profileInfo.dataset.userId = res._id;
@@ -78,10 +85,7 @@ function handleProfileFormSubmit(res) {
 function handleInfoCards(res, ownerId) {
   res.forEach((card) => {
     cardsContainer.append(
-      createCard(
-        { card: card, deleteCard, handleImagePopup, likeCard },
-        ownerId
-      )
+      createCard({ card: card, handleImagePopup, likeCard }, ownerId)
     );
   });
 }
@@ -93,7 +97,7 @@ function handleFormSubmitProfile(evt) {
   renderLoading(saveButtonProfile, true);
   editProfileInfo(nameProfileInput.value, jobProfileInput.value)
     .then((res) => {
-      handleInfoProfile(res);
+      handleProfileFormSubmit(res);
       closePopUp(popUpEdit);
     })
     .catch((err) => {
@@ -112,10 +116,10 @@ function handleFormAddNewCardSubmit(evt) {
   const saveButtonNewCard = formNewCard.querySelector(".button");
   renderLoading(saveButtonNewCard, true);
   addNewCard(nameCardInput.value, linkCardInput.value)
-    .then((res) => {
+    .then((card) => {
       cardsContainer.prepend(
         createCard(
-          { card, deleteCard, handleImagePopup, likeCard },
+          { card: card, handleImagePopup, likeCard },
           profileInfo.dataset.userId
         )
       );
@@ -138,7 +142,7 @@ function handleFormSubmitAvatar(evt) {
   renderLoading(saveButtonAvatar, true);
   changeUserAvatar(linkInputAvatar.value)
     .then((res) => {
-      handleInfoProfile(res);
+      handleProfileFormSubmit(res);
       closePopUp(popupTypeAvatar);
     })
     .catch((err) => {
@@ -150,7 +154,6 @@ function handleFormSubmitAvatar(evt) {
 }
 formAvatar.addEventListener("submit", handleFormSubmitAvatar);
 
-
 profileImage.addEventListener("click", () => {
   openPopUp(popupTypeAvatar);
   clearValidation(formAvatar, validationConfig);
@@ -158,7 +161,7 @@ profileImage.addEventListener("click", () => {
 
 buttonEdit.addEventListener("click", () => {
   openPopUp(popUpEdit);
-  fillFormEditProfile();
+  handleFormEditProfile();
   clearValidation(formEditProfile, validationConfig);
 });
 
@@ -174,16 +177,10 @@ export function handleImagePopup(card) {
   openPopUp(popUpTypeImage);
 }
 
-function fillFormEditProfile() {
-  nameInput.value = profileTitle.textContent;
-  jobInput.value = profileDescription.textContent;
-}
-
 profileImage.addEventListener("click", () => {
   openPopUp(popupTypeAvatar);
   clearValidation(formAvatar, validationConfig);
 });
-
 
 popups.forEach((element) =>
   element.addEventListener("click", closePopupOverlay)
@@ -191,3 +188,10 @@ popups.forEach((element) =>
 popups.forEach((element) =>
   element.addEventListener("click", closePopupByCross)
 );
+
+function handleFormEditProfile() {
+  nameProfileInput.value = profileTitle.textContent;
+  jobProfileInput.value = profileDescription.textContent;
+}
+
+enableValidation(validationConfig);

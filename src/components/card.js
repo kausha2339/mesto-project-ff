@@ -39,7 +39,7 @@ export function createCard(cardData, ownerId) {
     deleteCardButton.addEventListener("click", () => {
       deleteCardServer(cardData.card)
         .then((res) => {
-          res.remove();
+          cardItem.remove();
         })
         .catch((err) => {
           console.log(`Что-то пошло не так. Ошибка: ${err}`);
@@ -48,9 +48,7 @@ export function createCard(cardData, ownerId) {
   }
   return cardItem;
 }
-export function deleteCard(cardData) {
-  cardData.remove();
-}
+
 
 export function likeCard(card, likeBtn, likeCount) {
   if (likeBtn.classList.contains("card__like-button_is-active")) {

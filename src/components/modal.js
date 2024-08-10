@@ -18,15 +18,6 @@ export function handleEscape(evt) {
   }
 }
 
-export function renderLoading(button, isLoading) {
-  if (isLoading) {
-    button.textContent = "Сохранение...";
-    button.disabled = true;
-  } else {
-    button.textContent = "Сохранить";
-    button.disabled = false;
-  }
-}
 
 export function closePopupOverlay(evt) {
   if (evt.target.classList.contains("popup")) {
