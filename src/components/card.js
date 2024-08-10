@@ -11,7 +11,7 @@ export function createCard(cardData, ownerId) {
   cardImg.alt = cardData.card.name;
   cardImg.src = cardData.card.link;
 
-  cardImg.addEventListener("click", () => cardData.handleImagePopup(card));
+  cardImg.addEventListener("click", () => cardData.handleImagePopup(cardImg));
 
   const title = cardItem.querySelector(".card__title");
   title.textContent = cardData.card.name;
